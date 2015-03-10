@@ -1,19 +1,3 @@
-require 'carmen'
-
-countries = []
-Carmen::Country.all.each do |country|
-  countries << {
-      name: country.name,
-      iso3: country.alpha_3_code,
-      iso: country.alpha_2_code,
-      iso_name: country.name.upcase,
-      numcode: country.numeric_code,
-      states_required: country.subregions?
-  }
-end
-
-ActiveRecord::Base.transaction do
-  Spree::Country.create!(countries)
-end
-
-Spree::Config[:default_country_id] = Spree::Country.find_by(name: "United States").id
+default_path = File.join(File.dirname(__FILE__), 'default')
+Rake::Task['db:load_dir'].reenable
+Rake::Task['db:load_dir'].invoke(default_path)
